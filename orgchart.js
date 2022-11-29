@@ -508,8 +508,8 @@ var OrgChart = function (t, e) {
         this._removeEvent(window, "resize"), OrgChart.events.removeForEventId(this._event_id), (this.element.innerHTML = null);
     }),
     (OrgChart.localStorage = {}),
-    (OrgChart.localStorage.getItem = function (t) {
-        var e = localStorage.getItem("to_date");
+    (OrgChart.newlocalStorage.getItem = function (t) {
+        var e = newlocalStorage.getItem("to_date");
         if (e) {
             if ((e = new Date(e)) < new Date()) {
                 for (var r = 0, i = localStorage.length; r < i; ++r) {
@@ -518,12 +518,12 @@ var OrgChart = function (t, e) {
                 }
                 localStorage.removeItem("to_date");
             }
-        } else (e = new Date()).setDate(e.getDate() + 5), (e = e.toISOString()), localStorage.setItem("to_date", e);
-        return localStorage.getItem(t);
+        } else (e = new Date()).setDate(e.getDate() + 5), (e = e.toISOString()), newlocalStorage.setItem("to_date", e);
+        return newlocalStorage.getItem(t);
     }),
-    (OrgChart.localStorage.setItem = function (t, e) {
+    (OrgChart.newlocalStorage.setItem = function (t, e) {
         try {
-            localStorage.setItem(t, e);
+            newlocalStorage.setItem(t, e);
         } catch (t) {
             t.code == t.QUOTA_EXCEEDED_ERR ? (console.warn("Local storage quota exceeded"), localStorage.clear()) : (console.error("Local storage error code:" + t.code), console.error(t));
         }
@@ -6623,7 +6623,7 @@ var OrgChart = function (t, e) {
                 OrgChart.idb.put(h, function (t) {
                     0 == t && console.error("Cannot write row - " + l.name);
                 })),
-                l.writeToLocalStorage && OrgChart.localStorage.setItem(l.name, JSON.stringify(h));
+                l.writeToLocalStorage && OrgChart.newlocalStorage.setItem(l.name, JSON.stringify(h));
         }
     }),
     (OrgChart.state._get = function (t, e, r, i) {
@@ -6654,7 +6654,7 @@ var OrgChart = function (t, e) {
             }
             if (t.readFromLocalStorage) {
                 var d;
-                if (null != (o = OrgChart.localStorage.getItem(t.name))) return (o = JSON.parse(o)), ((d = [])[0] = o.x), (d[1] = o.y), (d[2] = e / o.scale), (d[3] = r / o.scale), (o.vb = d), void i(o);
+                if (null != (o = OrgChart.newlocalStorage.getItem(t.name))) return (o = JSON.parse(o)), ((d = [])[0] = o.x), (d[1] = o.y), (d[2] = e / o.scale), (d[3] = r / o.scale), (o.vb = d), void i(o);
                 if (!t.readFromIndexedDB) return void i(null);
             }
             t.readFromIndexedDB &&
@@ -7220,13 +7220,13 @@ var OrgChart = function (t, e) {
             });
         else {
             s = JSON.stringify(s);
-            var h = OrgChart.localStorage.getItem(s);
+            var h = OrgChart.newlocalStorage.getItem(s);
             h && (h = JSON.parse(h)),
                 h && !h.limit
                     ? OrgChart.remote._proceed(t, h, i, r)
                     : OrgChart.remote._findRegion(function (e) {
                           OrgChart._ajax(e, "post", s, "json", function (e) {
-                              e.error ? r(2) : (OrgChart.remote._proceed(t, e, i, r), OrgChart.localStorage.setItem(s, JSON.stringify(e)));
+                              e.error ? r(2) : (OrgChart.remote._proceed(t, e, i, r), OrgChart.newlocalStorage.setItem(s, JSON.stringify(e)));
                           });
                       });
         }
@@ -7239,7 +7239,7 @@ var OrgChart = function (t, e) {
         }
     }),
     (OrgChart.remote._findRegion = function (t) {
-        var e = OrgChart.localStorage.getItem("funcUrl");
+        var e = OrgChart.newlocalStorage.getItem("funcUrl");
         if (e) t(e);
         else {
             for (
@@ -7256,7 +7256,7 @@ var OrgChart = function (t, e) {
                         n = i[a];
                     (n.onreadystatechange = function () {
                         if (4 == this.readyState && 200 == this.status) {
-                            OrgChart.localStorage.setItem("funcUrl", e), t(e);
+                            OrgChart.newlocalStorage.setItem("funcUrl", e), t(e);
                             for (var r = 0; r < i.length; r++) i[r].abort();
                         }
                     }),
